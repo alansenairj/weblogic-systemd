@@ -85,9 +85,9 @@ cp weblogic-systemd-scripts/bin/* /home/oracle/bin/
 ### Set Permissions
 
 ```bash
-chmod +x /home/oracle/bin/weblogic_start.sh
+chmod +x /home/oracle/bin/weblogic.sh
 chmod +x /home/oracle/bin/nodeman.sh
-chown oracle:oinstall /home/oracle/bin/weblogic_start.sh
+chown oracle:oinstall /home/oracle/bin/weblogic.sh
 chown oracle:oinstall /home/oracle/bin/nodeman.sh
 ```
 
