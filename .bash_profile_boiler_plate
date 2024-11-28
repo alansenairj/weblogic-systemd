@@ -1,0 +1,120 @@
+# .bash_profile
+
+# Get the aliases and functions
+if [ -f ~/.bashrc ]; then
+        . ~/.bashrc
+fi
+
+#idioma em US
+#export NLS_LANG=AMERICAN_AMERICA.AL32UTF8
+
+# temp e perm
+export TEMP=/tmp
+export TMP=/tmp
+export TMPDIR=/tmp
+umask 022
+
+
+# Weblogic variables #####################################
+
+# Configurable variables
+DOMAIN_NAME=<domain_name>
+
+
+# var dinâmicas
+export ORACLE_HOSTNAME=$(hostname)
+export ORACLE_BASE=/u01/app/oracle
+export ORACLE_HOME=$ORACLE_BASE/product/12.2.1.4.0
+export ORA_INVENTORY=/u01/app/oraInventory
+export MW_HOME=$ORACLE_HOME
+export WL_HOME=$MW_HOME/wlserver
+export DOMAIN_HOME=$MW_HOME/user_projects/domains/$DOMAIN_NAME
+export WL_CONFIG=$ORACLE_HOME/oracle_common/common/bin
+export DOMAIN_BASE=$DOMAIN_HOME
+export ORACLE_COMMON_HOME=$ORACLE_BASE/product/12.2.1.4.0/oracle_common
+export WLS_HOME=$DOMAIN_HOME/servers
+export DOMAIN_START=$DOMAIN_HOME/bin
+
+# Check and show path envs
+
+check_env() {
+    echo "ORACLE_HOSTNAME: $ORACLE_HOSTNAME"
+    echo "ORACLE_BASE: $ORACLE_BASE"
+    echo "ORACLE_HOME: $ORACLE_HOME"
+    echo "ORA_INVENTORY: $ORA_INVENTORY"
+    echo "MW_HOME: $MW_HOME"
+    echo "WL_HOME: $WL_HOME"
+    echo "DOMAIN_NAME: $DOMAIN_NAME"
+    echo "DOMAIN_HOME: $DOMAIN_HOME"
+    echo "WL_CONFIG: $WL_CONFIG"
+    echo "DOMAIN_BASE: $DOMAIN_BASE"
+    echo "ORACLE_COMMON_HOME: $ORACLE_COMMON_HOME"
+    echo "WLS_HOME: $WLS_HOME"
+    echo "DOMAIN_START: $DOMAIN_START"
+}
+
+# paths backup and deploy
+export DEPLOY_DIR=/u01/app/oracle/deploy
+export BACKUP_DIR=/u01/backup
+
+# log base
+export LOG_BASE=$WLS_HOME
+
+# Base paths
+export PATH=/usr/sbin:/usr/local/bin:$PATH
+
+# Weblogic
+export PATH=$ORACLE_HOME/bin:$PATH      #configurar depois de montar o domain
+export PATH=$ORACLE_HOME/OPatch:$PATH
+
+# Oracle start scripts
+export PATH=$PATH:/home/oracle/bin
+
+# libs
+export LD_LIBRARY_PATH=$ORACLE_HOME/lib:/lib:/usr/lib
+#export CLASSPATH=$ORACLE_HOME/jlib:$ORACLE_HOME/rdbms/jlib
+
+# Forward X11 login
+export XAUTHORITY=/home/oracle/.Xauthority
+
+
+
+
+############ ALIASES PART ###################
+
+# bash facilities
+alias egrep='egrep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias grep='grep --color=auto'
+alias l.='ls -d .* --color=auto'
+alias ls='ls --color=auto'
+alias ll='ls -l --color=auto'
+alias vi='vim'
+alias which='alias | /usr/bin/which --tty-only --read-alias --show-dot --show-tilde'
+
+# list WL Managed Server
+alias listweblogicsrvs='ps -ef | grep java | grep Dweblogic.Name | sed -n -e '\''s/.* \([0-9]\+\).* -Dweblogic\.Name=\([^ ]*\).*/\1 e=\2/p'\'''
+
+# deploy and backup
+alias deploy="cd $DEPLOY_DIR"
+alias backup="cd $BACKUP_DIR"
+
+# Admin Server Logs
+alias logs_Admin="less $LOG_BASE/AdminServer/logs/AdminServer.log"
+alias logs_admin="less $LOG_BASE/AdminServer/logs/AdminServer.log"
+alias logs_domain="less $LOG_BASE/AdminServer/logs/sateprddomain.log"
+
+export MACHINE_NUMBER=1
+
+# Managed Server Logs
+# JVMs names are hardcoded. Change it to fit your configuration
+alias logs_api="less $LOG_BASE/SRV-SATE_API${MACHINE_NUMBER}/logs/SRV-SATE_API${MACHINE_NUMBER}.out"
+alias logs_atendimento="less $LOG_BASE/SRV-SATE_ATENDIMENTO${MACHINE_NUMBER}/logs/SRV-SATE_ATENDIMENTO${MACHINE_NUMBER}.out"
+alias logs_consulta="less $LOG_BASE/SRV-SATE_CONSULTA_UNIFICADA${MACHINE_NUMBER}/logs/SRV-SATE_CONSULTA_UNIFICADA${MACHINE_NUMBER}.out"
+alias logs_maps="less $LOG_BASE/SRV-SATE_MAPS${MACHINE_NUMBER}/logs/SRV-SATE_MAPS${MACHINE_NUMBER}.out"
+alias logs_mensageria="less $LOG_BASE/SRV-SATE_MENSAGERIA${MACHINE_NUMBER}/logs/SRV-SATE_MENSAGERIA${MACHINE_NUMBER}.out"
+alias logs_principal="less $LOG_BASE/SRV-SATE_PRINCIPAL${MACHINE_NUMBER}/logs/SRV-SATE_PRINCIPAL${MACHINE_NUMBER}.out"
+alias logs_radio="less $LOG_BASE/SRV-SATE_RADIO_OPERADOR${MACHINE_NUMBER}/logs/SRV-SATE_RADIO_OPERADOR${MACHINE_NUMBER}.out"
+alias logs_rast="less $LOG_BASE/SRV-SATE_RAST${MACHINE_NUMBER}/logs/SRV-SATE_RAST${MACHINE_NUMBER}.out"
+alias logs_reports="less $LOG_BASE/SRV-SATE_REPORTS${MACHINE_NUMBER}/logs/SRV-SATE_REPORTS${MACHINE_NUMBER}.out"
+alias logs_sate="less $LOG_BASE/SRV-SATE_CAD${MACHINE_NUMBER}/logs/SRV-SATE_CAD${MACHINE_NUMBER}.out"
