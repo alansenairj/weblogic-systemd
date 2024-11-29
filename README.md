@@ -3,7 +3,7 @@ Weblogic Cluster SystemD auto start - nodemanager and console Admin startup with
 
 # WebLogic Systemd Scripts
 
-This repository provides scripts and configuration files to manage Oracle WebLogic Server and Node Manager using `systemd` on Oracle Linux 9. The scripts allow you to start, stop, and check the status of WebLogic Server and Node Manager both at system startup and manually as the `oracle` user.
+This repository provides scripts and configuration files to manage Oracle WebLogic Server and Node Manager using `systemd` on Oracle Linux 9. The scripts allow you to start, stop, and check the status of WebLogic Server and Node Manager both at system startup and manually as the `oracle` user. This script is not necessary in lifecycle of the Weblogic by itself. You can just rely on systemD to start and stop these services to be more direct. 
 
 ## Table of Contents
 
@@ -157,23 +157,25 @@ Create `/etc/systemd/system/nodemanager.service`:
 
 ```ini
 [Unit]
-Description=WebLogic Node Manager Service
+Description=WebLogic NodeManager Service
 After=network.target sshd.service
 
 [Service]
 Type=simple
+ExecStart=/u01/app/oracle/product/12.2.1.4.0/user_projects/domains/<domain name>ldomain/bin/startNodeManager.sh
+ExecStop=/u01/app/oracle/product/12.2.1.4.0/user_projects/domains/<domain name>/bin/stopNodeManager.sh
 User=oracle
 Group=oinstall
-WorkingDirectory=/home/oracle/bin
-ExecStart=/u01/app/oracle/product/12.2.1.4.0/user_projects/domains/satehmldomain/bin/startNodeManager.sh
-ExecStop=/u01/app/oracle/product/12.2.1.4.0/user_projects/domains/satehmldomain/bin/stopNodeManager.sh
-
 Restart=no
-TimeoutStartSec=600
+TimeoutStartSec=300
+TimeoutStopSec=300
 KillMode=process
+StandardOutput=append:/var/log/nodemanager/nm.out
+StandardError=inherit
 
 [Install]
 WantedBy=multi-user.target
+
 ```
 
 #### **WebLogic Server Service**
@@ -188,18 +190,20 @@ Requires=nodemanager.service
 
 [Service]
 Type=simple
+WorkingDirectory=/home/oracle/bin
+ExecStart=/u01/app/oracle/product/12.2.1.4.0/user_projects/domains/<domain name>/bin/startWebLogic.sh
+ExecStop=/u01/app/oracle/product/12.2.1.4.0/user_projects/domains/<domain name>/bin/stopWebLogic.sh
 User=oracle
 Group=oinstall
-WorkingDirectory=/home/oracle/bin
-ExecStart=/u01/app/oracle/product/12.2.1.4.0/user_projects/domains/satehmldomain/bin/startWebLogic.sh
-ExecStop=/u01/app/oracle/product/12.2.1.4.0/user_projects/domains/satehmldomain/bin/stopWebLogic.sh
-
 Restart=no
 TimeoutStartSec=1200
 KillMode=process
+StandardOutput=append:/var/log/weblogic/console-admin.out
+StandardError=inherit
 
 [Install]
 WantedBy=multi-user.target
+
 ```
 
 ### Reload Systemd Daemon
@@ -217,33 +221,40 @@ sudo systemctl enable --now weblogic.service
 
 ---
 
-## Usage
-
-### Starting|Stopping NodeManager and Admin Console
-
+Usage
+Starting Services
 Start Node Manager and WebLogic Server:
 
-```bash
 # Start Node Manager
-Do not use systemD to manage start and stop on yet initialized system
-Use custom scripts to do that.
-Assuming you added bin/ to you PATH in bash_profile
-nodemanager.sh stop|start
-
-# Start WebLogic Server
-Same thing to Admin console. Use custom script
-weblogic.sh stop|start
+```bash
+sudo systemctl start nodemanager.service
 ```
 
-### Checking Status
+# Start WebLogic Server
+```bash
+sudo systemctl start weblogic.service
+```
 
-Check the status of the services:
+# Stop WebLogic Server
+```bash
+sudo systemctl stop weblogic.service
+```
 
+# Stop Node Manager
+```bash
+sudo systemctl stop nodemanager.service
+```
+
+# Check the status of the services:
 ```bash
 sudo systemctl status weblogic.service
 sudo systemctl status nodemanager.service
 ```
-
+# Restarting Services
+```bash
+sudo systemctl restart weblogic.service
+sudo systemctl restart nodemanager.service
+```
 ---
 
 ## Granting Permissions to Oracle User
