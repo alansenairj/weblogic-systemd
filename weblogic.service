@@ -6,14 +6,16 @@ Requires=nodemanager.service
 [Service]
 Type=simple
 WorkingDirectory=/home/oracle/bin
-ExecStart=/u01/app/oracle/product/12.2.1.4.0/user_projects/domains/satehmldomain/bin/startWebLogic.sh
-ExecStop=/u01/app/oracle/product/12.2.1.4.0/user_projects/domains/satehmldomain/bin/stopWebLogic.sh
+ExecStart=/u01/app/oracle/product/12.2.1.4.0/user_projects/domains/<domain name>/bin/startWebLogic.sh
+ExecStop=/u01/app/oracle/product/12.2.1.4.0/user_projects/domains/<domain name>/bin/stopWebLogic.sh
 User=oracle
 Group=oinstall
 Restart=no
 TimeoutStartSec=1200
 KillMode=process
-#LimitNOFILE=65535
+StandardOutput=append:/var/log/weblogic/console-admin.out
+StandardError=inherit
 
 [Install]
 WantedBy=multi-user.target
+
